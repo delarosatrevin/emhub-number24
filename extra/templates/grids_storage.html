@@ -13,10 +13,13 @@
             <div class="col-12">
                 <h1 style="font-size: 256px;" id='number'> 1 2 3 4 </h1>
             </div>
-            <div class="col-6">
+            <div class="col-4">
+                <h1 id="pts-label"></h1>
+            </div>
+            <div class="col-4">
                 <h1 id="seconds-label"></h1>
             </div>
-            <div class="col-6">
+            <div class="col-4">
                 <button type="button" id="application-btn-ok" class="btn btn-lg btn-primary" onclick="javascript: store_number(false)">Combination Solved</button>
             </div>
         </div>
@@ -30,8 +33,9 @@
                 <table class="table">
                     <thead class="bg-light">
                     <tr class="border-0">
-                    <th class="border-0">Result</th>
-                    <th class="border-0">Sequence</th>
+                        <th class="border-0">Sequence</th>
+                        <th class="border-0">Time</th>
+                        <th class="border-0">Pts</th>
                     </tr>
                     </thead>
                     <tbody id="table-body">
@@ -54,8 +58,9 @@
     var seconds_counter = 0;
     var timeOutId = null;
     var index = -1;
-    var sequence = null;
+    var sequences = null;
     var number_text = '';
+    var pts = null;
 
     function update_time(){
         $('#seconds-label').text('Seconds: ' + seconds_counter);
@@ -92,10 +97,13 @@ function shuffle(array) {
 
 function pick_number(){
     if (index < 0) {  // first time
-        sequence = shuffle(data.two);
+        sequences = [shuffle(data.one), shuffle(data.two), shuffle(data.three)];
     }
     index += 1;
-    var number = sequence[index];
+    var pts = Math.random() < 0.5 ? 0 : 1;
+    var number = sequences[pts][index];
+    var pts_text = "Pts: " + (pts + 2);
+    document.getElementById('pts-label').innerText = pts_text;
     number_text = number[0] + " " + number[1] + " " + number[2] + " " + number[3];
     document.getElementById('number').innerText = number_text;
 
@@ -104,8 +112,11 @@ function pick_number(){
 
 function store_number(expired) {
       var badge_type = expired ? 'danger' : 'success';
+        var rowHtml =  '<tr><td><span class="badge badge-lg badge-' + badge_type + ' mr-1">';
+        rowHtml += number_text + '</span></td><td>' + seconds_counter + '</td>';
+        rowHtml += '<td>' + (pts + 2) + '</td></tr>';
 
-    $('#table-body').append('<tr><td><span class="badge badge-lg badge-' + badge_type + ' mr-1">' + number_text + '</span></td><td>' + seconds_counter + '</td></tr>');
+    $('#table-body').append(rowHtml);
     pick_number();
 }
 
