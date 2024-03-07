@@ -6,7 +6,10 @@ WORKDIR /python-docker
 COPY . .
 RUN pip3 install -e .
 
-RUN emh-data --create_instance /instance
+RUN pwd
+RUN ls
+
+RUN python -m emhub.data --create_instance /instance
 ENV EMHUB_INSTANCE /instance
 
 # Create a new user with UID 10016
