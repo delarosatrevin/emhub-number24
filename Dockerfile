@@ -13,8 +13,9 @@ RUN python -m emhub.data --create_instance /instance
 ENV EMHUB_INSTANCE /instance
 
 # Create a new user with UID 10016
-RUN addgroup -g 10016 choreo && \
-    adduser  --disabled-password  --no-create-home --uid 10016 --ingroup choreo choreouser
+RUN addgroup --gid 10016 choreo
+RUN adduser  --disabled-password  --no-create-home --uid 10016 --ingroup choreo choreouser
+
 USER 10016
 EXPOSE 5000
 CMD [ "flask", "run", "--host=0.0.0.0"]
