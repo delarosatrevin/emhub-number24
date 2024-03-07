@@ -1,0 +1,141 @@
+
+<!-- Modal to with a Form to create a new Session -->
+
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+
+      <div class="modal-content">
+        <!-- Modal header -->
+        <div class="modal-header">
+            <h3 class="modal-title" id="session-modal-title"> Create Session:  </h3>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <!-- End of Modal header -->
+
+        {% include session_body %}
+
+    <!-- Modal footer -->
+    <div class="modal-footer">
+        <button type="button" id="booking-btn-cancel"  class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" id="booking-btn-ok" class="btn btn-outline-dark" onclick="onCreateClick()">Create</button>
+    </div>
+    <!-- End of Modal footer -->
+  </div>
+</div>
+
+<!-- javascript  -->
+<script>
+    $('select').selectpicker();
+
+    var transfer_host = {{ transfer_host|tojson }};
+    var workflow_default = {{ workflow_default|tojson }};
+    var otf_host_default = {{ otf_host_default|tojson }};
+
+    function onProcessingClick(inputRadio) {
+        var rows = document.getElementsByClassName("processing-row");
+        for (var i = 0; i < rows.length; i++) {
+            var r = rows[i];
+            r.style.display = r.id === "row-" + inputRadio.value ? "block" : "none";
+        }
+    }
+
+    function advancedOnClick(checkbox){
+         if (checkbox.checked)
+             $(".advanced").show();
+         else
+             $(".advanced").hide();
+    }
+
+    function onCreateClick(){
+        var formValues = getFormAsJson('session-form');
+        var attrs = {
+            booking_id: parseInt(document.getElementById('booking-id').value),
+            acquisition: {
+                voltage: formValues.acq_voltage,
+                magnification: formValues.acq_magnification,
+                pixel_size: formValues.acq_pixel_size,
+                dose: formValues.acq_dose,
+                cs: formValues.acq_cs
+            },
+        }
+
+        if (formValues.session_name) {
+            var otf_task = [
+                "otf",
+                getObjectValue(formValues, 'otf_host', otf_host_default)
+            ];
+
+            attrs.name = formValues.session_name;
+
+            if (!formValues.raw_folder){
+                attrs.extra = {
+                    raw: {},
+                    project_id: formValues.project_id,
+                }
+                attrs.tasks = [["transfer", transfer_host], otf_task]
+            }
+            else {
+                attrs.extra = {
+                    raw: {path: formValues.raw_folder},
+                    project_id: formValues.project_id
+                }
+                attrs.tasks = [["monitor", transfer_host], otf_task]
+            }
+
+            if (!formValues.otf_folder)
+                attrs.extra.otf = {
+                    workflow: getObjectValue(formValues, 'otf_workflow', workflow_default),
+                    host: getObjectValue(formValues, 'otf_host', otf_host_default),
+                    cryolo_model: getObjectValue(formValues, 'cryolo_model', '')
+                }
+            else
+                attrs.extra.otf  = {path: otf_folder}
+        }
+
+        // If there is a session
+        {#if (attrs.extra.raw_folder)#}
+        var regex = /^[a-zA-Z0-9-_]{2,32}$/;
+        var valid_name = nonEmpty(attrs.name) && regex.test(attrs.name);
+
+        if (!valid_name) {
+            showError("Provide a valid <strong>Session Name</strong>.<br>" +
+                "<p>It must have from 2 to 32 digits, containing letters, numbers, slash or underscore.</p>");
+            return;
+        }
+
+        // showError(JSON.stringify(attrs, null, 4));
+        // return
+
+        var ajaxContent = $.ajax({
+            url: "{{ url_for('api.create_session') }}",
+            type: "POST",
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({attrs: attrs}),
+            dataType: "json"
+        });
+
+        ajaxContent.done(function(jsonResponse) {
+            //alert(JSON.stringify(jsonResponse, null, 4));
+
+            if ('error' in jsonResponse)
+                showError(jsonResponse['error']);
+            else {
+                //window.location.reload();
+                window.location = "{{ url_for_content('session_default') }}" + "&session_id=" + jsonResponse.session.id;
+            }
+        });
+
+        ajaxContent.fail(function(jqXHR, textStatus) {
+            alert( "Request failed: " + textStatus );
+        });
+    }
+
+    (function(window, document, $, undefined) {
+        var checkbox = document.getElementById('advanced-checkbox');
+        console.log("loading page: checked: " + checkbox.checked);
+        advancedOnClick(checkbox);
+
+    })(window, document, window.jQuery);
+
+</script>

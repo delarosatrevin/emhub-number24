@@ -1,0 +1,35 @@
+
+<div class="container-fluid dashboard-content ">
+    <!-- Header -->
+{#        {% set title = "Dashboard" %}#}
+{#        {% include 'include_header.html' %}#}
+    <!-- end Header -->
+
+    <!-- ============================================================== -->
+    <!-- content -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <!-- ============================================================== -->
+        <!-- Dashboard right content -->
+        <!-- ============================================================== -->
+        {% include dashboard_right %}
+        <!-- ============================================================== -->
+        <!-- End  of Dashboard right content -->
+        <!-- ============================================================== -->
+
+</div>
+</div>
+
+
+    <!-- ============================================================== -->
+    <!-- Session Modal -->
+    <!-- ============================================================== -->
+    <div class="modal fade" id="session-modal" tabindex="-1" role="dialog" aria-labelledby="sessionModal" aria-hidden="true">
+    </div>
+
+<!-- javascript  -->
+<script>
+    function load_calendar(resource_id) {
+        return load_main_content('booking_calendar', {resource_id:resource_id});
+    }
+</script>

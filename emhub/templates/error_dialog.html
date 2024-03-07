@@ -1,0 +1,52 @@
+<!-- ============================================================== -->
+<!-- Error Modal Content -->
+<!-- ============================================================== -->
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="error-modal-title" style="color: red">ERROR:</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <h3> {{ error['message'] }} </h3>
+
+
+          {% if error['body'] %}
+
+            <div class="col-col-12">
+
+                <div class="accordion-regular">
+                <div id="accordion3">
+
+                    <div class="card">
+                        <div class="card-header" id="headingSeven">
+                            <h5 class="mb-0">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                            <span class="fas fa-angle-down mr-3"></span>Display error traceback
+                            </button>
+                            </h5>
+                        </div>
+
+                        <div id="collapseSeven" class="collapse" aria-labelledby="headingSeven" data-parent="#accordion3">
+                            <div class="card-body">
+                                <pre>{{ error['body'] }}</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                </div>
+
+            </div>
+          {% endif %}
+
+      </div>
+    </div>
+  </div>
+<!-- ============================================================== -->
+<!-- End of Error Modal Content -->
+<!-- ============================================================== -->
+
+
