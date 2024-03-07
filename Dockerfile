@@ -18,5 +18,5 @@ RUN adduser  --disabled-password  --no-create-home --uid 10016 --ingroup choreo 
 
 USER 10016
 EXPOSE 5000
-CMD [ "flask", "run", "--host=0.0.0.0"]
-#CMD [ "gunicorn", "-k", "gevent", "--workers=2", "emhub:create_app()", "--bind", "0.0.0.0:8080" ]
+#CMD [ "flask", "run", "--host=0.0.0.0"]
+CMD [ "gunicorn", "-k", "gevent", "--workers=2", "emhub:create_app()", "--bind", "0.0.0.0:8080" ]
