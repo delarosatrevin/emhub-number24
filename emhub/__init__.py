@@ -158,7 +158,7 @@ def create_app(test_config=None):
     # Define some content_id list that does not requires login
     NO_LOGIN_CONTENT = ['users_list',
                         'user_reset_password',
-                        'pages']
+                        'pages', 'dashboard']
 
     # Allow to define customized templates in the instance folder
     # templates should be in: 'extra/templates'
@@ -244,7 +244,7 @@ def create_app(test_config=None):
     @app.route('/index', methods=['GET', 'POST'])
     def index():
         # return _redirect('pages.index', page_id='welcome')
-        return _redirect('login')
+        return _redirect('main', content_id='dashboard')
 
     @app.route('/login', methods=['GET'])
     def login():
