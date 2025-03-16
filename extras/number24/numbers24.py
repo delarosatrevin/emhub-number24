@@ -2,6 +2,11 @@ from collections import defaultdict
 from itertools import permutations
 import operator
 import sys
+import json
+import os
+
+here = os.path.abspath(os.path.dirname(__file__))
+
 
 def div(a, b):
     return -9999 if b < a or b == 0 or a % b else a / b
@@ -71,16 +76,23 @@ def solve(s, permute=False):
         solutions.extend(solve_2x2(seq))
     return solutions
 
+
+def uniqsols(solutions):
+    uniqSols = set()
+    for sol in solutions:
+        if sol not in uniqSols:
+            uniqSols.add(sol)
+    return uniqSols
+
+
 def printseq(s, permute=False):
     u = uniq(s)
     print(u, ":  ", s)
     solutions = solve(s, permute=permute)
-    uniqSols = set()
-    for sol in solutions:
-        if sol not in uniqSols:
-            print("   ", sol)
-            uniqSols.add(sol)
-    return len(solutions)
+    uniqSols = uniqsols(solutions)
+    for sol in uniqSols:
+        print("   ", sol)
+    return len(uniqSols)
 
 
 if __name__ == '__main__':
@@ -89,6 +101,7 @@ if __name__ == '__main__':
 
     if n == 1:
         sols = set()
+        sequences = {}
 
         for i in revrange(10):
             for i2 in revrange(i):
@@ -98,10 +111,16 @@ if __name__ == '__main__':
                         s = [i, i2, i3, i4]
                         u = uniq(s)
                         unique[u].append(u)
-                        if printseq(s):
+                        if solutions := uniqsols(solve(s, permute=True)):
+                            sol = e = next(iter(solutions))
+                            print(u, ":  ", s, "sols: ", len(solutions), "first: ", sol)
                             sols.add(u)
+                            sequences[u] = {'pts': 1, 'sols': [sol]}
 
         print("Total", total, "  Unique: ", len(unique), "Solutions: ", len(sols))
+
+        with open(os.path.join(here, 'sequences.json'), 'w') as f:
+            json.dump(sequences, f, indent=4)
 
     elif n == 5:
         s = [int(a) for a in sys.argv[1:]]

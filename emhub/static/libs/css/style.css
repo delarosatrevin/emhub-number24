@@ -1639,7 +1639,7 @@ Left Navigation Sidebar
 
 .nav-left-sidebar {
     position: fixed;
-    width: 264px;
+    width: 200px;
     height: 100%;
     top: 60px;
     overflow: auto;

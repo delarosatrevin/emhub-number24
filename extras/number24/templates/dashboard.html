@@ -1,19 +1,19 @@
 
 <div class="container-fluid dashboard-content">
     <!-- Header -->
-    {% set title = "Number 24" %}
-    {% include 'include_header.html' %}
+{#    {% set title = "Number 24" %}#}
+{#    {% include 'include_header.html' %}#}
     {% set is_manager = current_user.is_manager %}
     {% set is_admin = current_user.is_admin %}
 
     <!-- table row -->
     <div class="row col-12 align-top">
 
-        <div class="col-8 align-top">
+        <div class="col-9 align-top">
 
             <div class="row">
                 <div class="col-12">
-                    <h1 style="font-size: 256px;" id='number'> 1 2 3 4 </h1>
+                    <h1 style="font-size: 160px;" id='number'> 1 2 3 4 </h1>
                 </div>
 {#                <div class="row col-12 align-top align-items-start" style="background-color: red">#}
                     <div class="col-3">
@@ -22,10 +22,8 @@
                     <div class="col-3">
                         <h1 id="seconds-label"></h1>
                     </div>
-                    <div class="col-3">
-                        <button type="button" class="btn btn-lg btn-secondary" onclick="javascript: pause_continue()" id="pause-continue-btn">Pause</button>
-                    </div>
-                    <div class="col-3">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-lg btn-secondary mr-3" onclick="javascript: pause_continue()" id="pause-continue-btn">Pause</button>
                         <button type="button" class="btn btn-lg btn-primary" onclick="javascript: store_number(false)">Combination Solved</button>
                     </div>
 {#                </div>#}
@@ -33,7 +31,7 @@
 
         </div>
 
-        <div class="col-4">
+        <div class="col-3">
 <div class="card">
         <div class="card-header"><h3>History</h3></div>
         <div class="card-body p-0">
@@ -64,6 +62,7 @@
 
 <script>
 
+    var number = null;
     var seconds_counter = 0;
     var timeOutId = null;
     var index = 0;
@@ -88,10 +87,11 @@
     }
 
 function pick_number(){
-    var number = sequences[index];
+    number = sequences[index];
     var seq = number.seq;
     index += 1;
-    var pts_text = "Pts: " + number.pts;
+    pts = number.pts;
+    var pts_text = "Pts: " + pts;
     document.getElementById('pts-label').innerText = pts_text;
     number_text = seq[0] + " " + seq[1] + " " + seq[2] + " " + seq[3];
     document.getElementById('number').innerText = number_text;
@@ -101,11 +101,12 @@ function pick_number(){
 
 function store_number(expired) {
       var badge_type = expired ? 'danger' : 'success';
-        var rowHtml =  '<tr><td><span class="badge badge-lg badge-' + badge_type + ' mr-1">';
-        rowHtml += number_text + '</span></td><td>' + seconds_counter + '</td>';
-        rowHtml += '<td>' + (pts + 2) + '</td></tr>';
+        var rowHtml =  '<tr><td><button type="button" data-placement="left" data-toggle="tooltip" data-html="true" title="<b>Solutions:</b> </br><ul><li>' + number.sol + '</li></ul>" class="btn btn-sm btn-' + badge_type + ' mr-1">';
+        rowHtml += number_text + '</button></td><td>' + seconds_counter + '</td>';
+        rowHtml += '<td>' + pts + '</td></tr>';
 
     $('#table-body').append(rowHtml);
+    $('[data-toggle="tooltip"]').tooltip();
     pick_number();
 }
 
@@ -125,13 +126,15 @@ function pause_continue(){
 var sequences = {{ sequences|tojson }};
 
 
-
 (function(window, document, $, undefined) {
     "use strict";
 
         //var arr = shuffle(data.one);
 
         pick_number();
+
+        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="popover"]').popover()
 
 })(window, document, window.jQuery);
 
