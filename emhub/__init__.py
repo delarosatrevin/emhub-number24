@@ -251,7 +251,7 @@ def create_app(test_config=None):
         """ This view will be called when the user lands in the login page (GET)
         and also when login credentials are submitted (POST).
         """
-        next_content = flask.request.args.get('next_content', 'dashboard')
+        next_content = flask.request.args.get('next_content', 'user_login')
         return _redirect('main', content_id=next_content)
 
     @app.route('/do_login', methods=['POST'])
@@ -288,8 +288,6 @@ def create_app(test_config=None):
 
         flask_login.login_user(user)
 
-        if next_content == 'user_login':
-            next_content = 'dashboard'
         return _redirect('main', content_id=next_content)
 
     @app.route('/do_switch_login', methods=['POST'])
@@ -450,7 +448,6 @@ def create_app(test_config=None):
 
     from emhub.data.data_manager import DataManager
     app.user = flask_login.current_user
-
 
     from .data.content import dc
     app.dc = dc

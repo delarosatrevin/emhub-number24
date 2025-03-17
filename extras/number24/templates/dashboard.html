@@ -9,35 +9,35 @@
     <!-- table row -->
     <div class="row col-12 align-top">
 
-        <div class="col-9 align-top">
+        <div class="col-6 align-top">
 
             <div class="row">
                 <div class="col-12">
-                    <h1 style="font-size: 160px;" id='number'> 1 2 3 4 </h1>
+                    <h1 style="font-size: 100px;" id='number'> 1 2 3 4 </h1>
                 </div>
 {#                <div class="row col-12 align-top align-items-start" style="background-color: red">#}
                     <div class="col-3">
-                        <h1 id="pts-label"></h1>
+                        <h3 id="pts-label"></h3>
                     </div>
                     <div class="col-3">
-                        <h1 id="seconds-label"></h1>
+                        <h3 id="seconds-label"></h3>
                     </div>
                     <div class="col-6">
-                        <button type="button" class="btn btn-lg btn-secondary mr-3" onclick="javascript: pause_continue()" id="pause-continue-btn">Pause</button>
-                        <button type="button" class="btn btn-lg btn-primary" onclick="javascript: store_number(false)">Combination Solved</button>
+                        <button type="button" class="btn btn-lg btn-secondary mr-3 mb-2" onclick="javascript: pause_continue()" id="pause-continue-btn">Pause</button>
+                        <button type="button" class="btn btn-lg btn-primary mb-2" onclick="javascript: store_number(false)">Solved</button>
                     </div>
 {#                </div>#}
             </div>
 
         </div>
 
-        <div class="col-3">
+        <div class="col-6">
 <div class="card">
         <div class="card-header"><h3>History</h3></div>
         <div class="card-body p-0">
 
             <div class="table-responsive">
-                <table class="table">
+                <table class="table" id="pts-table">
                     <thead class="bg-light">
                     <tr class="border-0">
                         <th class="border-0">Sequence</th>
@@ -101,12 +101,16 @@ function pick_number(){
 
 function store_number(expired) {
       var badge_type = expired ? 'danger' : 'success';
-        var rowHtml =  '<tr><td><button type="button" data-placement="left" data-toggle="tooltip" data-html="true" title="<b>Solutions:</b> </br><ul><li>' + number.sol + '</li></ul>" class="btn btn-sm btn-' + badge_type + ' mr-1">';
+        var solHtml = '"<b>Solutions:</b> </br><ul><li>' + number.sol + '</li></ul>"';
+        var buttonStr = '<button type="button"  data-trigger="focus" data-html="true" data-toggle="popover" data-placement="top" data-content=' + solHtml;
+        //var rowHtml =  '<tr><td><button type="button" data-placement="left" data-toggle="tooltip" data-html="true" title="<b>Solutions:</b> </br><ul><li>' + number.sol + '</li></ul>" class="btn btn-sm btn-' + badge_type + ' mr-1">';
+        var rowHtml = '<tr><td>' + buttonStr + 'class="btn btn-sm btn-' + badge_type + ' mr-1">';
         rowHtml += number_text + '</button></td><td>' + seconds_counter + '</td>';
         rowHtml += '<td>' + pts + '</td></tr>';
 
     $('#table-body').append(rowHtml);
     $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="popover"]').popover()
     pick_number();
 }
 
