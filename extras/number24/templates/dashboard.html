@@ -3,8 +3,10 @@
     <!-- Header -->
 {#    {% set title = "Number 24" %}#}
 {#    {% include 'include_header.html' %}#}
+    {% set is_logged = current_user.is_authenticated %}
     {% set is_manager = current_user.is_manager %}
     {% set is_admin = current_user.is_admin %}
+    {% set email = current_user.email or 'no-mail' %}
 
     <!-- table row -->
     <div class="row col-12 align-top">
@@ -12,6 +14,9 @@
         <div class="col-6 align-top">
 
             <div class="row">
+                <div class="col-12">
+                    <h5> {{ is_logged }} </h5>
+                </div>
                 <div class="col-12">
                     <h1 style="font-size: 100px;" id='number'> 1 2 3 4 </h1>
                 </div>
@@ -32,6 +37,8 @@
         </div>
 
         <div class="col-6">
+            <button type="button" class="btn btn-lg btn-primary mb-2" onclick="javascript: on_save_session()">Save Session</button>
+
 <div class="card">
         <div class="card-header"><h3>History</h3></div>
         <div class="card-body p-0">
@@ -66,14 +73,16 @@
     var seconds_counter = 0;
     var timeOutId = null;
     var index = 0;
-    var sequences = null;
+    var sequences = {{ sequences|tojson }};
     var number_text = '';
     var pts = null;
+    var session = [];
+    var userEmail = "{{ current_user.email }}";
 
     function update_time(){
         $('#seconds-label').text('Seconds: ' + seconds_counter);
         seconds_counter += 1;
-        if (seconds_counter > 120)
+        if (seconds_counter > 30)
             store_number(true);
         else
             timeOutId = setTimeout(update_time, 1000);  // every second
@@ -107,6 +116,11 @@ function store_number(expired) {
         var rowHtml = '<tr><td>' + buttonStr + 'class="btn btn-sm btn-' + badge_type + ' mr-1">';
         rowHtml += number_text + '</button></td><td>' + seconds_counter + '</td>';
         rowHtml += '<td>' + pts + '</td></tr>';
+        session.push({
+            id: number.id,
+            secs: seconds_counter,
+            expired: expired
+        })
 
     $('#table-body').append(rowHtml);
     $('[data-toggle="tooltip"]').tooltip();
@@ -126,9 +140,71 @@ function pause_continue(){
         }
 }
 
-// Used like so
-var sequences = {{ sequences|tojson }};
+function save_session(data) {
 
+    data.sessions.push({
+        date: new Date().toISOString(),
+        user: userEmail,
+        data: session
+    });
+
+    var form = {
+        id: 10,
+        name: "config:sequences",
+        definition: data
+    }
+
+    var ajaxContent = $.ajax({
+        url: "{{ url_for('api.update_form') }}",
+        type: "POST",
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify({attrs: form}),
+        dataType: "json"
+    });
+
+    ajaxContent.done(function (jsonResponse) {
+        if ('error' in jsonResponse)
+            showError(jsonResponse['error']);
+        else
+            window.location.reload();
+    });
+
+    ajaxContent.fail(function (jqXHR, textStatus) {
+        showError("Request failed: " + textStatus);
+    });
+}
+
+function on_save_session(){
+
+    var endpoint = "{{ url_for('api.get_config') }}";
+    var logged = {{ is_logged|tojson }};
+
+    if (!logged) {
+        showMessage(" Login required", "You need to log in to save a session");
+        return;
+    }
+
+    var ajaxContent = $.ajax({
+        url: endpoint,
+        type: "POST",
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify({attrs: {config: "sequences"}}),
+        dataType: "json"
+    });
+
+    ajaxContent.done(function(jsonResponse) {
+        if ('error' in jsonResponse)
+            showError(jsonResponse['error']);
+        else {
+            save_session(jsonResponse['config']);
+        }
+    });
+
+    ajaxContent.fail(function(jqXHR, textStatus) {
+        showError( "Request config failed: " + textStatus );
+    });
+
+}
 
 (function(window, document, $, undefined) {
     "use strict";

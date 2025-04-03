@@ -226,7 +226,6 @@ def create_app(test_config=None):
             if content_id == 'user_login':  # Redirects to Dashboard by default
                 kwargs['content_id'] = 'dashboard'
             app.user.image = app.dc.user_profile_image(app.user)
-            kwargs['view_usage_report'] = dm.check_user_access('usage_report')
         else:
             if content_id not in NO_LOGIN_CONTENT:
                 kwargs = {'content_id': 'user_login',
