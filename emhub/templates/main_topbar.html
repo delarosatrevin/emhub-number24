@@ -2,7 +2,7 @@
     <div class="dashboard-header">
         <nav class="navbar navbar-expand-lg bg-white fixed-top">
             <img src="{{ url_for('static', filename='images/emhub-24-icon.svg') }}" height="65px" style="margin-left: 15px;">
-            <label style="font-size: 26px; font-weight: bold;">Number <tag style="font-size: 32px; color: black">24</tag></label>
+            <a href="{{ url_for_content('dashboard') }}" style="font-size: 26px; font-weight: bold;">Number <tag style="font-size: 32px; color: black">24</tag></a>
 {#            <img src="{{ url_for('static', filename='images/emhub-text-default.png') }}" height="45px" style="margin-left: 15px;">#}
 {#            <a class="navbar-brand" href="{{ url_for('index') }}">emhub</a>#}
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,6 +28,8 @@
                                         </div>
                                         <a class="dropdown-item" href="javascript:showUserProfile({{ current_user.id }})"><i class="fas fa-user mr-2"></i>Profile</a>
                                         <a class="dropdown-item" href="javascript:showUser({{ current_user.id }})"><i class="fas fa-cog mr-2"></i>Account</a>
+                                        <a class="dropdown-item" href="{{ url_for_content('applications') }}"><i class="fas fa-cog mr-2"></i>Sessions</a>
+                                        <hr/>
                                         <a class="dropdown-item" href="{{ url_for('do_logout') }}"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
                                     </div>
                                 {% else %}
