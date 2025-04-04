@@ -24,7 +24,7 @@ def register_content(dc):
         sessions = dc.app.dm.get_config('sequences')['sessions']
         all_seen = set()
         for s in sessions:
-            all_seen.update(d['id'] for d in s['data'])
+            all_seen.update(d['id'] for d in s['data'] if not d['expired'])
 
         return sessions, all_seen
 
@@ -62,7 +62,10 @@ def register_content(dc):
             n = len(s['data'])
             bad = sum(1 for d in s['data'] if d['expired'])
             good = n - bad
-            avg = sum(d['secs'] for d in s['data'] if not d['expired']) / good
+            if good > 0:
+                avg = sum(d['secs'] for d in s['data'] if not d['expired']) / good
+            else:
+                avg = 0
             s['info'] = {
                 'avg': '%0.2f' % avg,
                 'good': good,
